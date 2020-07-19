@@ -1,44 +1,56 @@
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-
-buildscript {
-    repositories {
-        jcenter()
-        maven { url 'https://maven.google.com' }
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.4'
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.21'
-    }
-}
+def DEFAULT_COMPILE_SDK_VERSION = 26
+def DEFAULT_BUILD_TOOLS_VERSION = '28.0.3'
+def DEFAULT_MIN_SDK_VERSION = 16
+def DEFAULT_TARGET_SDK_VERSION = 26
 
 def safeExtGet(prop, fallback) {
-  rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+    rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
 }
 
+apply plugin: 'com.android.library'
+apply plugin: 'maven'
+
+buildscript {
+    if (project == rootProject) {
+        repositories {
+            google()
+            jcenter()
+        }
+        dependencies {
+            classpath 'com.android.tools.build:gradle:3.4.1'
+        }
+    }
+}
+
+apply plugin: 'com.android.library'
+apply plugin: 'maven'
+
 android {
-    compileSdkVersion safeExtGet('compileSdkVersion', 26)
-
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
     defaultConfig {
-        minSdkVersion safeExtGet('minSdkVersion', 16)
-        targetSdkVersion safeExtGet('targetSdkVersion', 26)
+        minSdkVersion safeExtGet('minSdkVersion', DEFAULT_MIN_SDK_VERSION)
+        targetSdkVersion safeExtGet('targetSdkVersion', DEFAULT_TARGET_SDK_VERSION)
         versionCode 1
-        versionName '1.0'
-
+        versionName "1.0"
+    }
+    lintOptions {
+        abortOnError false
     }
 }
 
 repositories {
-    mavenCentral()
+    mavenLocal()
     maven {
         url "$rootDir/../node_modules/react-native/android"
-        name 'React Native (local)'
     }
 }
 
-
 dependencies {
-    api project(":segment_analytics-react-native")
+    //noinspection GradleDynamicVersion
+    implementation 'com.facebook.react:react-native:+'  // From node_modules
+
+    api project(":@segment_analytics-react-native")
     api('com.appsflyer:segment-android-integration:1.+') {
         transitive = true
     }
