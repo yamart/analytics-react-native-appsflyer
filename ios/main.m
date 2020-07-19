@@ -25,7 +25,6 @@ RCT_REMAP_METHOD(setup,
                 setupWithResolver:(RCTPromiseResolveBlock)resolve
                 rejecter:(RCTPromiseRejectBlock)reject)
 {
-    NSLog(@"RNAnalyticsIntegration_AppsFlyer setup");
     [RNAnalytics addIntegration:SEGAppsFlyerIntegrationFactory.instance];
     SEGAppsFlyerIntegrationFactory.instance.delegate = self;
     resolve(@{});
@@ -117,12 +116,10 @@ RCT_REMAP_METHOD(setup,
 }
 
 -(void) reportOnFailure:(NSString *) errorMessage {
-  NSLog(@"RNAnalyticsIntegration_AppsFlyer reportOnFailure %@", errorMessage);
   [self sendEventWithName:@"onInstallConversionData" body:errorMessage];
 }
 
 -(void) reportOnSuccess:(NSString *) data {
-  NSLog(@"RNAnalyticsIntegration_AppsFlyer reportOnSuccess %@", data);
   [self sendEventWithName:@"onInstallConversionData" body:data];
 }
 
