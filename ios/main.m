@@ -46,6 +46,28 @@ RCT_REMAP_METHOD(setup,
     [self performSelectorOnMainThread:@selector(handleCallback:) withObject:message waitUntilDone:NO];
 };
 
+- (void)onConversionDataFail:(nonnull NSError *)error {
+    NSDictionary* errorMessage = @{
+                                   @"status": @"failure",
+                                   @"type": @"onConversionDataFail",
+                                   @"data": error
+                                 };
+
+    [self performSelectorOnMainThread:@selector(handleCallback:) withObject:errorMessage waitUntilDone:NO];
+}
+
+
+- (void)onConversionDataSuccess:(nonnull NSDictionary *)conversionInfo {
+    NSDictionary* message = @{
+                                   @"status": @"success",
+                                   @"type": @"onConversionDataSuccess",
+                                   @"data": conversionInfo
+                                 };
+
+    [self performSelectorOnMainThread:@selector(handleCallback:) withObject:message waitUntilDone:NO];
+}
+
+
 - (void) onAppOpenAttribution:(NSDictionary*) attributionData
 {
     NSDictionary* message = @{
