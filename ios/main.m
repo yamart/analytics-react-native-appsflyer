@@ -32,7 +32,7 @@ RCT_REMAP_METHOD(setup,
 
 - (NSArray<NSString *> *)supportedEvents
 {
-  return @[@"onInstallConversionData"];
+  return @[@"onConversionDataReceived"];
 }
 
 - (void)onConversionDataReceived:(NSDictionary *)installData{
@@ -116,11 +116,11 @@ RCT_REMAP_METHOD(setup,
 }
 
 -(void) reportOnFailure:(NSString *) errorMessage {
-  [self sendEventWithName:@"onInstallConversionData" body:errorMessage];
+  [self sendEventWithName:@"onConversionDataReceived" body:errorMessage];
 }
 
 -(void) reportOnSuccess:(NSString *) data {
-  [self sendEventWithName:@"onInstallConversionData" body:data];
+  [self sendEventWithName:@"onConversionDataReceived" body:data];
 }
 
 @end
