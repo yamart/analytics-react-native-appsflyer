@@ -1,10 +1,7 @@
-declare const AppsFlyer:
-    | {disabled: true}
-    | (() => Promise<void>)
-
-declare const onInstallConversionData: Function;
+declare const setup: Function;
+declare const onConversionDataReceived: Function;
 
 export {
-    AppsFlyer,
-    onInstallConversionData
-}
+    setup,
+    onConversionDataReceived
+};

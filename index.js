@@ -1,36 +1,55 @@
-var ReactNative = require('react-native');
-var disabled =
-  ReactNative.Platform.OS === 'ios'
-    ? 'false' === 'true'
-    : ReactNative.Platform.OS === 'android'
-    ? 'false' === 'true'
-    : true;
+var { Platform, NativeModules, NativeEventEmitter } = require('react-native');
+var eventsMap = {};
 
-if (disabled) {
-  module.exports = { disabled: true };
-} else {
-  var bridge = ReactNative.NativeModules['RNAnalyticsIntegration_AppsFlyer'];
+class AppsFlyerBridge {
+	bridge;
+	emitter;
 
-  if (!bridge) {
-    throw new Error('Failed to load AppsFlyer integration native module');
-  }
+	constructor() {
+		if (!this.isDisabled()) {
+			this.init();
+		}
+	}
 
-  var emitter = new ReactNative.NativeEventEmitter(bridge);
-  var eventsMap = {};
+	isDisabled() {
+		return Platform.OS === 'ios' ? 'false' === 'true' : Platform.OS === 'android' ? 'false' === 'true' : true;
+	}
 
-  module.exports = {
-    AppsFlyer: bridge.setup,
-    onInstallConversionData: callback => {
-      const subscription = emitter.addListener(
-        'onInstallConversionData',
-        callback
-      );
+	init() {
+		const bridge = NativeModules['RNAnalyticsIntegration_AppsFlyer'];
 
-      eventsMap['onInstallConversionData'] = subscription;
+		if (!bridge) {
+			throw new Error('Failed to load AppsFlyer integration native module');
+		}
 
-      return function remove() {
-        subscription.remove();
-      };
-    },
-  };
+		this.bridge = bridge;
+		this.emitter = new NativeEventEmitter(bridge);
+	}
+
+	setup = async () => {
+		try {
+			if (!this.isDisabled() && this.bridge) {
+				return await this.bridge.setup();
+			}
+		} catch (e) {
+			console.log(e);
+		}
+
+		return { disabled: true };
+	};
+
+	onConversionDataReceived = (callback) => {
+		if (this.isDisabled()) {
+			return () => {};
+		}
+
+		const subscription = this.emitter.addListener('onConversionDataReceived', callback);
+		eventsMap['onConversionDataReceived'] = subscription;
+
+		return () => {
+			subscription.remove();
+		};
+	};
 }
+
+module.exports = new AppsFlyerBridge();

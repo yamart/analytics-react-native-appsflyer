@@ -18,6 +18,7 @@ public class RNAnalyticsIntegration_AppsFlyerModule extends ReactContextBaseJava
   public RNAnalyticsIntegration_AppsFlyerModule(ReactApplicationContext reactContext) {
     super(reactContext);
     this.reactContext = reactContext;
+    this.initConversionListener();
   }
 
   @Override
@@ -28,7 +29,6 @@ public class RNAnalyticsIntegration_AppsFlyerModule extends ReactContextBaseJava
   @ReactMethod
   public void setup() {
     RNAnalytics.INSTANCE.addIntegration(AppsflyerIntegration.FACTORY);
-    this.initConversionListener();
   }
 
   private void initConversionListener() {
@@ -37,7 +37,7 @@ public class RNAnalyticsIntegration_AppsFlyerModule extends ReactContextBaseJava
     AppsflyerIntegration.cld = new AppsflyerIntegration.ConversionListenerDisplay() {
       @Override
       public void display(Map<String, String> attributionData) {
-        self.reactContext.getJSModule(RCTDeviceEventEmitter.class).emit("onInstallConversionData", attributionData.toString());
+        self.reactContext.getJSModule(RCTDeviceEventEmitter.class).emit("onConversionDataReceived", attributionData.toString());
       }
     };
   }
